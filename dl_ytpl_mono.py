@@ -1,8 +1,10 @@
-from youtubeParsePlaylistFromUrl import crawl
 import os
-import sys 
+import sys
 import subprocess
 import time
+
+from youParse import crawl
+
 
 # timer
 startTime = time.time()

@@ -1,9 +1,11 @@
-from youtubeParsePlaylistFromUrl import crawl
 import os
 import sys
 import subprocess
 import threading
 import time
+
+from youParse import crawl
+
 
 # Requirement:  youtube-dl installed:
 # - http://rg3.github.io/youtube-dl/
@@ -25,7 +27,6 @@ class OneDownloader(threading.Thread):
 	def __init__(self, url_temp):
 		threading.Thread.__init__(self)
 		self.url_temp = url_temp
-		self.passage = 0
 		self.result = "none"
 		self.filename = ""
 
@@ -43,20 +44,20 @@ class OneDownloader(threading.Thread):
 		hasAlreadyBeenDownloaded = False
 		j = 0
 		a = out[1]
-		while j<len(listDL):
+		while j < len(listDL):
 			b = listDL[j]
 			if listDL[j].find('\n'):
 				b = listDL[j].split('\n')[0]
 			hasAlreadyBeenDownloaded |= (a == b)
 			j += 1
 
-		if hasAlreadyBeenDownloaded == False:
+		if not hasAlreadyBeenDownloaded:
 			os.system("youtube-dl -i -c --console-title --no-post-overwrites -x --audio-format mp3 '"+self.url_temp+"'")
 			self.result = out[1]+'\n'
 			self.filename = out[2]
-			print "===>>> "+out[0]+' add to playlist file'
+			print "===>>> " + out[0] + ' add to playlist file'
 		else:
-			print "===>>> "+out[0]+' has been already downloaded'
+			print "===>>> " + out[0] + ' has been already downloaded'
 
 ###########################
 #
@@ -70,7 +71,7 @@ playlistFile = "playlist.txt"
 
 fWrite = open(playlistFile, 'a')
 if len(sys.argv) > 1:
-	url = sys.argv[1] #the url from command
+	url = sys.argv[1] # the url from command
 	final_url = crawl(url)
 
 	#open file and read it
@@ -93,7 +94,7 @@ if len(sys.argv) > 1:
 	j = 0
 	for thread in threads:
 		thread.join()
-		print "THREAD TERMINATE "+`j`
+		print "THREAD TERMINATE " + `j`
 		resultThread.append(thread.result)
 		filenameThread.append(thread.filename)
 		j += 1
@@ -108,7 +109,7 @@ if len(sys.argv) > 1:
 				os.remove(filenameThread[i])
 			except:
 				print filenameThread[i]+" cannot be removed !!!"   
-		i+= 1
+		i += 1
 
 	#print time of exec
 	fWrite.close()
